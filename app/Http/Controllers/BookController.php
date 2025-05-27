@@ -41,7 +41,7 @@ class BookController extends Controller
         if ($validator->fails()){
             return response()->json([
                 "success"=> false,
-                "meddege" => $validator->errors()
+                "messag" => $validator->errors()
             ], 422);
         };
         //3. upload image
@@ -53,7 +53,7 @@ class BookController extends Controller
             "title" => $request->title,
             "description" => $request->description,
             "price" => $request->price,
-            "stock" => $request->stock??0,
+            "stock" => $request->stock,
             "cover_photo" => $image->hashName(),
             "genre_id" => $request->genre_id,
             "author_id" => $request->author_id,
@@ -90,7 +90,7 @@ class BookController extends Controller
         $book = Book::find($id);
         if (! $book){
             return response()->json([
-                "success" => true,
+                "success" => false,
                 "messege" => "resourse not found"
             ], 404);
         }
@@ -99,10 +99,10 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|numeric|min:0',
-            'cover_photo' => 'nullable|image|mimes:jpeg.png,jpg|max:2048',
-            'genre_id' => 'required|integer|exists:genres,id',
-            'author_id' => 'required|integer|exists:authors,id'
+            'stock' => 'required|integer|min:0',
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'genre_id' => 'required|exists:genres,id',
+            'author_id' => 'required|exists:authors,id'
         ]);
         if ($validator->fails()) {
             return response()->json([

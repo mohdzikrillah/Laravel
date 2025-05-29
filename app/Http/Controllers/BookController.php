@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 class BookController extends Controller
 {
     public function index() {
-        $books = Book::all();
+        $books = Book::with('genre','author')->get();
 
         if ($books->isEmpty()){
             return response()->json([
@@ -41,7 +41,7 @@ class BookController extends Controller
         if ($validator->fails()){
             return response()->json([
                 "success"=> false,
-                "messag" => $validator->errors()
+                "message" => $validator->errors()
             ], 422);
         };
         //3. upload image
@@ -62,24 +62,24 @@ class BookController extends Controller
         //5. response
         return response()->json([
             "success"=> true,
-            "messege" => "resource add successfully!",
+            "message" => "resource add successfully!",
             "data" => $book
         ],201);
     }
 
     //show
     public function show(string $id){
-        $book = Book::find($id);
+        $book = Book::with('genre','author')-> find($id);
 
         if (!$book){
             return response()->json([
                 "success" => false,
-                "messege" => "resource not found",
+                "message" => "resource not found",
             ]);
         }
         return response()->json([
             "success" => true,
-            "messege" => "get detail resource",
+            "message" => "get detail resource",
             "data" => $book
         ]);
     }
@@ -91,7 +91,7 @@ class BookController extends Controller
         if (! $book){
             return response()->json([
                 "success" => false,
-                "messege" => "resourse not found"
+                "message" => "resourse not found"
             ], 404);
         }
         // 2 validator
@@ -136,7 +136,7 @@ class BookController extends Controller
         $book->update($data);
         return response()->json([
             "success" => true,
-            "messege" => "resourse updated successfully",
+            "message" => "resourse updated successfully",
             "data" => $book
         ]);
 

@@ -4,7 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Genre;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,19 +18,18 @@ Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/logout',[AuthController::class, 'logout'])->middleware('auth:api');
 
-Route::apiResource('/books', BookController::class)->only('index');
-Route::apiResource('/genres', GenreController::class)->only('index');
-Route::apiResource('/authors', AuthorController::class)->only('index');
-
 Route::middleware(['auth:api'])->group(function(){
-    Route::apiResource('/books', BookController::class)->only('show');
-    Route::apiResource('/genres', GenreController::class)->only('show');
-    Route::apiResource('/authors', AuthorController::class)->only('show');
+    Route::apiResource('/books', BookController::class)->only(['show','store','update']);
+    Route::apiResource('/genres', GenreController::class)->only(['show','store','update']);
+    Route::apiResource('/authors', AuthorController::class)->only(['show','store','update']);
+    Route::apiResource('/transactions', TransactionController::class)->only(['show','store','update']);
 
     Route::middleware(['role:admin'])->group(function(){
-        Route::apiResource('/books', BookController::class)->only(['store','update','destroy']);
-        Route::apiResource('/genres', GenreController::class)->only(['store','update','destroy']);
-        Route::apiResource('/authors', AuthorController::class)->only(['store','update','destroy']);
+        Route::apiResource('/books', BookController::class)->only(['destroy', 'index']);
+        Route::apiResource('/genres', GenreController::class)->only(['destroy', 'index']);
+        Route::apiResource('/authors', AuthorController::class)->only(['destroy', 'index']);
+        Route::apiResource('/transactions', TransactionController::class)->only(['destroy', 'index']);
+
     });
 });
 
